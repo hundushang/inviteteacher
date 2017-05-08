@@ -4,37 +4,37 @@
           "prizeList": [
               {
                   "id": 1,
-                  "img": "upload/",
+                  "img": "upload/up360_A-D-S/invite/30huafei.png",
                   "name": "30元话费",
                   "ticket": 1
               },
               {
                   "id": 2,
-                  "img": "upload/",
+                  "img": "upload/up360_A-D-S/invite/auxDianfengshan.png",
                   "name": "奥克斯电风扇",
                   "ticket": 5
               },
               {
                   "id": 3,
-                  "img": "upload/",
+                  "img": "upload/up360_A-D-S/invite/suporZhazhiji.png",
                   "name": "苏泊尔榨汁机",
                   "ticket": 10
               },
               {
                   "id": 4,
-                  "img": "upload/",
+                  "img": "upload/up360_A-D-S/invite/haierChumanyi.png",
                   "name": "海尔家用除螨仪",
                   "ticket": 20
               },
               {
                   "id": 5,
-                  "img": "upload/",
+                  "img": "upload/up360_A-D-S/invite/miAC.png",
                   "name": "小米空气净化器",
                   "ticket": 30
               },
               {
                   "id": 6,
-                  "img": "upload/last",
+                  "img": "upload/up360_A-D-S/invite/miTV.png",
                   "name": "小米电视机",
                   "ticket": 50
               }
@@ -42,7 +42,12 @@
           "ticketInfo": {
               "surplusNum": 1,
               "totalNum": 5,
-              "teacherName": "xxx"
+              "teacherName": "xxx",
+              "teacherId": "11111"
+          },
+          "inviteInfo": {
+            "urlLong": "https://www.baidu.com",
+            "urlShort": "baidu.com"
           }
       },
       "msg": "",   
@@ -63,7 +68,7 @@
                   "endDay": "2017-07-05",
                   "inviteUserId": "111",
                   "inviteName": "王晓燕儿",
-                  "inviteMobile": "13735891111",
+                  "inviteMobile": "",
                   "inviteTime": "2017-03-08",
                   "taskFlag": 0
               },

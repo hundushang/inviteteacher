@@ -4,7 +4,8 @@
     	<div class="text-box">
     		<p class="text">
 	    		<span class="title">被邀请人：</span>
-	    		<span class="name">{{item.inviteName}}</span>
+	    		<span class="name" v-if="item.inviteMobile&&item.inviteMobile!=''">{{item.inviteMobile | fixphone}} &nbsp; {{item.inviteName}}</span>
+	    		<span class="name" v-if="!item.inviteMobile || item.inviteMobile==''">{{item.inviteName}}</span>
 	    	</p>
 	    	<p class="text">
 	    		<span class="title">邀请时间：</span>
@@ -37,8 +38,21 @@
 				up360: STRUP360
 			}
 		},
+		filters: {
+	      	fixphone (phone) {
+	      		console.log(phone);
+	        	return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+	      	}
+		},
 		methods: {
 			callOther (item) {
+				if(item.inviteMobile == ''){
+					layer.open({
+		              content: '该老师没有手机号码！',
+		              btn: '我知道了'
+		            })
+		            return
+				}
 				let params = {
 					up360: this.up360,
 					recvUserId: item.inviteUserId,
@@ -50,12 +64,12 @@
 						layer.open({
 			              content: '发送成功！',
 			              btn: '我知道了'
-			            });
+			            })
 			        }else{
 			        	layer.open({
 			              content: response.body.msg,
 			              btn: '我知道了'
-			            });
+			            })
 			        }
 				});
 			}
@@ -82,12 +96,12 @@
 				}
 			}
 			.btn-callother{
-				width: 96px; height: 31px; line-height: 31px; border-radius: 3px; border: 1px solid #ffa42f; margin: 41px 15px 0 10px;
-				color: #ffa42f; text-align: center; font-size: 15px;
+				width: 96px; height: 31px; line-height: 31px; border-radius: 3px; border: 1px solid #ffa42f; margin: 50px 15px 0 10px;
+				color: #ffa42f; text-align: center; font-size: 15px; position: absolute; top: 0; right: 0;
 			}
 			.icon-lottery{
 				width: 71px; height: 71px; margin: 22px 15px 0 10px; background: url(../../../assets/images/icon-lottery.png) no-repeat;
-				background-size: 100% 100%;
+				background-size: 100% 100%; position: absolute; top: 0; right: 0;
 			}
 		}
 		.invite-none{

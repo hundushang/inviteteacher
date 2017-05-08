@@ -87,8 +87,17 @@
 		.numlist{
 			margin: 15px 43px 0; display: flex;
 			li{
-				flex: 1; color: #fff; border-right: 1px solid #fff; text-align: center;
-				&:last-child{
+				flex: 1; color: #fff; text-align: center;
+				position: relative;
+			  	&:after{
+			  		position: absolute;
+				    right: 0;
+				    top: 0;
+				    height: 100%;
+				    border-right: 1px solid rgba(255,212,145,1);
+				    content: '';
+			  	}
+				&:last-child:after{
 					border-right: 0;
 				}
 				span{

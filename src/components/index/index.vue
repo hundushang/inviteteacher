@@ -19,6 +19,9 @@
           <div class="icon-prizetag">
             <span class="text">{{item.ticket}}张奖券</span>
           </div>
+          <div class="name">
+            {{item.name}}
+          </div>
           <a href="javascript:;" class="btn-exchange" v-show="item.ticket<=ticketInfo.surplusNum" @click="exchangeFn(item.id)">立即兑换</a>
           <a href="javascript:;" class="btn-exchange btn-exchange-none" v-show="item.ticket>ticketInfo.surplusNum">立即兑换</a>
         </li>
@@ -46,7 +49,7 @@
     created () {
       this.$nextTick( () => {
         this.getprizeList()
-      })
+      })   
     },
     filters: {
       fixurl (url) {
@@ -57,23 +60,41 @@
       inviteTeacher () {
         let title = this.ticketInfo.teacherName + '老师邀请您来向上网抱走小米电视机、空气净化器、榨汁机！'
         let content = '只要参与，就有奖励！向上网，小学老师教学好帮手！'
-        let url = window.location.href
+        // let url = 'https://www.up360.com/home/teacherInvite/invitedOpen/' + this.ticketInfo.teacherId
+        let url = this.inviteInfo.urlLong
         let image = 'https://data.up360.com/'+this.prizesList[this.prizesList.length-1].img
         let param = {
           "title":title,
           "content":content,
           "url":url,
-          "image":image
+          "image":image,
+          "urlShort": this.inviteInfo.urlShort
         };
         var str_param = JSON.stringify(param);
         var u = navigator.userAgent;
         if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {//安卓手机
-          NativeInterface.share(str_param);
+          try{
+            local_obj.share(str_param);
+          }
+          catch(err){
+            layer.open({
+              content: '升级到最新版后才能邀请老师！',
+              btn: '我知道了'
+            });
+          }
         } 
         else if (u.indexOf('iPhone') > -1 || u.indexOf('iPad') > -1) {//苹果手机
-          window.location.href = '/share?param='+str_param;
+          try{
+            JSObjCActiviNotifiDetail.share(str_param);
+          }
+          catch(err){
+            layer.open({
+              content: '升级到最新版后才能邀请老师！',
+              btn: '我知道了'
+            });
+          }
         }else{
-          console.log('PC端不能分享！' + str_param);
+          // console.log('PC端不能分享！' + str_param);
         }
       },
       getprizeList () {
@@ -82,10 +103,9 @@
         }
         this.$http.post('/home/app/invite/prizes', params).then((response) => {
           if(response.body.state == 1){
-            var prizeList = response.body.data.prizeList
-            var ticketInfo = response.body.data.ticketInfo
-            this.prizesList = prizeList
-            this.ticketInfo = ticketInfo
+            this.prizesList = response.body.data.prizeList
+            this.ticketInfo = response.body.data.ticketInfo
+            this.inviteInfo = response.body.data.inviteInfo
           }
         })
       },
@@ -121,17 +141,48 @@
             });
           }
         })
+      },
+      urlParse() {
+        var url = window.location.search;
+        var obj = {};
+        var reg = /[?&][^?&]+=[^?&]+/g;
+        var arr = url.match(reg);
+        // ['?id=12345', '&a=b']
+        if (arr) {
+          arr.forEach(function(item){
+            var tempArr = item.substring(1).split('=');
+            var key = decodeURIComponent(tempArr[0]);
+            var val = decodeURIComponent(tempArr[1]);
+            obj[key] = val;
+          });
+        }
+        return obj;
       }
     }
   }
 </script>
 
 <style lang="less" rel="stylesheet/less">
-  html,body{
-    height: 100%; min-height: 100%;
-  }
   #app{
-    height: 100%; 
+    width: 100%; overflow-x: hidden;
+  }
+  .layui-m-layer{
+    .layui-m-layercont{
+      padding: 30px; color: #666;
+    }
+    .layui-m-layerbtn{
+      border-top: 0; padding: 0 25px; box-sizing: border-box; background: #fff; display: flex;
+      span{
+        color: #fff; height: 34px; line-height: 34px; font-size: 14px; text-align: center;
+        flex: 1;
+      }
+      span[no]{
+        background: #C6C6C6; border-radius: 6px; margin-right: 10px;
+      }
+      span[yes]{
+        background: #55B651; border-radius: 6px; color: #fff;
+      }
+    }
   }
   .invite-wrapper{
     background: #f6db9f; padding-bottom: 50px;
@@ -162,7 +213,7 @@
     width: 92%; margin: 0 auto; background: #fff8e9;
     position: relative; border-radius: 5px;
     .title{
-      color: #ffa42f; padding: 20px 0; font-size: 20px; line-height: 20px; text-align: center;
+      color: #ffa42f; padding: 20px 0 15px; font-size: 20px; line-height: 20px; text-align: center;
     }
     .content{
       color: #333;
@@ -174,22 +225,30 @@
   .prize-wrapper{
     width: 92%; margin: 40px auto 0; background: #fff8e9; position: relative; border-radius: 5px;
     .title{
-      color: #ffa42f; padding: 25px 0; font-size: 20px; line-height: 26px; text-align: center;
+      color: #ffa42f; padding: 25px 0 5px; font-size: 20px; line-height: 26px; text-align: center;
     }
     .time{
       font-size: 15px; color: #333; line-height: 26px; text-align: center;
     }
     .prizelist{
       margin: 20px auto 0; padding: 0 15px; position: relative;
-      display: flex; flex-wrap: wrap; justify-content: space-between;
+      // display: flex; flex-wrap: wrap; justify-content: space-between;
       li{
-        flex: 0 0 48%; box-sizing: border-box; border: 2px solid #f6da9e; height: 175px; position: relative;
-        margin-bottom: 42px;
+        //flex: 0 0 48%; 
+        box-sizing: border-box; border: 2px solid #f6da9e; height: 175px; position: relative;
+        margin-bottom: 42px; width: 48%; display: inline-block;
+        &:nth-child(2n){
+          margin-left: 4%;
+        }
         img{
-          max-width: 80%; max-height: 120px; display: block; margin: 10px auto;
+          max-width: 98%; max-height: 140px; display: block; margin: 10px auto;
+        }
+        .name{
+          height: 30px; line-height: 30px; text-align: center; color: #ffa42f; display: block; width: 100%; position: absolute;
+          bottom: 20px; font-size: 18px;
         }
         .btn-exchange{
-          width: 106px; height: 36px; position: absolute; bottom: -15px; left: 50%; margin-left: -53px;
+          width: 106px; height: 36px; position: absolute; bottom: -20px; left: 50%; margin-left: -53px;
           color: #fff;
           font-size:15px; line-height: 30px; text-align: center;
           background: url("../../assets/images/btn-exchange.png") no-repeat;
